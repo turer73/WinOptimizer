@@ -11,6 +11,7 @@ import networkRouter from './routes/network.js';
 import performanceRouter from './routes/performance.js';
 import backupRouter from './routes/backup.js';
 import profilesRouter from './routes/profiles.js';
+import firstRunRouter from './routes/firstRun.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,6 +60,7 @@ app.use('/api/network', networkRouter);
 app.use('/api/performance', performanceRouter);
 app.use('/api/backup', backupRouter);
 app.use('/api/profiles', profilesRouter);
+app.use('/api/first-run', firstRunRouter);
 
 app.get('/api/logs', async (_req, res) => {
   const files = await fs.readdir(LOGS_ROOT).catch(() => []);

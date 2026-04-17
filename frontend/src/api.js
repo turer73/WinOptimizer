@@ -15,6 +15,13 @@ async function request(path, options = {}) {
 export const api = {
   health: () => request('/health'),
 
+  // First-run gate
+  firstRunStatus: () => request('/first-run/status'),
+  firstRunEnsure: (dryRun = false) =>
+    request('/first-run/ensure', { method: 'POST', body: JSON.stringify({ dryRun }) }),
+  firstRunReset: () => request('/first-run/reset', { method: 'POST' }),
+
+
   // Profiles
   listProfiles: () => request('/profiles'),
   applyProfile: (id, { dryRun = true } = {}) =>

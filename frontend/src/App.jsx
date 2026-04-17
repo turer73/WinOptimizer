@@ -5,6 +5,7 @@ import ModulePanel from './components/ModulePanel.jsx';
 import BackupPanel from './components/BackupPanel.jsx';
 import LogsPanel from './components/LogsPanel.jsx';
 import ResultDrawer from './components/ResultDrawer.jsx';
+import FirstRunGate from './components/FirstRunGate.jsx';
 
 const TABS = [
   { id: 'profiles', label: 'Profiller' },
@@ -27,6 +28,7 @@ export default function App() {
   }, []);
 
   return (
+    <FirstRunGate health={health}>
     <div className="min-h-screen">
       <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -90,6 +92,7 @@ export default function App() {
 
       <ResultDrawer result={result} onClose={() => setResult(null)} />
     </div>
+    </FirstRunGate>
   );
 }
 
