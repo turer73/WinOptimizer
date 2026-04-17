@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend-build:
+    name: Frontend build (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --workspace frontend run build
+
+  backend-syntax:
+    name: Backend syntax check (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      # Parse every JS file to catch syntax errors without running the server
+      - name: Syntax check all backend JS
+        run: |
+          set -e
+          find backend/src -name '*.js' -print0 | while IFS= read -r -d '' f; do
+            node --check "$f"
+          done
+
+  powershell-lint:
+    name: PowerShell lint (windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -SkipPublisherCheck -Scope CurrentUser
+      - name: Analyze scripts
+        shell: pwsh
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path backend/scripts -Recurse `
+            -Severity @('Error','Warning') `
+            -ExcludeRule PSAvoidUsingWriteHost,PSUseShouldProcessForStateChangingFunctions
+          if ($results) {
+            $results | Format-Table -AutoSize
+            $errors = @($results | Where-Object Severity -eq 'Error')
+            if ($errors.Count -gt 0) {
+              Write-Error "PSScriptAnalyzer reported $($errors.Count) error(s)."
+              exit 1
+            }
+          } else {
+            Write-Host "No issues found."
+          }
+
+  powershell-smoke:
+    name: PowerShell smoke test (windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run safe scripts in dry-run
+        shell: pwsh
+        run: |
+          $safeDryRun = @(
+            'backend/scripts/backup/Test-Admin.ps1',
+            'backend/scripts/privacy/Disable-Telemetry.ps1',
+            'backend/scripts/privacy/Disable-AdvertisingId.ps1',
+            'backend/scripts/privacy/Disable-Cortana.ps1',
+            'backend/scripts/privacy/Disable-LocationTracking.ps1',
+            'backend/scripts/privacy/Disable-Feedback.ps1',
+            'backend/scripts/privacy/Disable-ActivityHistory.ps1',
+            'backend/scripts/bloatware/Get-InstalledApps.ps1',
+            'backend/scripts/services/Get-Services.ps1',
+            'backend/scripts/network/Set-DnsCloudflare.ps1',
+            'backend/scripts/network/Set-DnsQuad9.ps1',
+            'backend/scripts/network/Block-TelemetryHosts.ps1',
+            'backend/scripts/performance/Set-VisualEffectsPerformance.ps1',
+            'backend/scripts/performance/Disable-StartupApps.ps1',
+            'backend/scripts/performance/Set-PowerHighPerformance.ps1',
+            'backend/scripts/backup/List-Backups.ps1'
+          )
+          $failed = 0
+          foreach ($script in $safeDryRun) {
+            Write-Host "--- $script" -ForegroundColor Cyan
+            try {
+              $out = & pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -File $script -DryRun 2>&1
+              $text = ($out | Out-String).Trim()
+              $match = [regex]::Match($text, '(?s)([{\[].*)$')
+              if (-not $match.Success) { throw "No JSON emitted: $text" }
+              $null = $match.Groups[1].Value | ConvertFrom-Json
+              Write-Host "  ok"
+            } catch {
+              Write-Warning "  FAILED: $_"
+              $failed++
+            }
+          }
+          if ($failed -gt 0) {
+            Write-Error "$failed script(s) failed their smoke test."
+            exit 1
+          }
