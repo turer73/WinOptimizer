@@ -1,0 +1,12 @@
+{
+  "name": "Minimal",
+  "description": "Safe baseline — privacy essentials only. No app removal, no service changes. Fully reversible.",
+  "risk": "low",
+  "steps": [
+    { "name": "Export system state", "script": "backup/Export-SystemState.ps1", "stopOnError": true },
+    { "name": "Disable telemetry",    "script": "privacy/Disable-Telemetry.ps1" },
+    { "name": "Disable advertising ID","script": "privacy/Disable-AdvertisingId.ps1" },
+    { "name": "Disable feedback",     "script": "privacy/Disable-Feedback.ps1" },
+    { "name": "Disable activity history","script": "privacy/Disable-ActivityHistory.ps1" }
+  ]
+}

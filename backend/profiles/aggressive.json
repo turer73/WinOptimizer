@@ -1,0 +1,30 @@
+{
+  "name": "Aggressive",
+  "description": "Full lockdown — removes most MS apps, disables Xbox/maps/location services, blocks telemetry hosts, switches DNS, high-perf power. Review every step.",
+  "risk": "high",
+  "steps": [
+    { "name": "Export system state", "script": "backup/Export-SystemState.ps1", "stopOnError": true },
+    { "name": "Create restore point", "script": "backup/New-Checkpoint.ps1", "args": { "Description": "WinOptimizer-Aggressive" } },
+    { "name": "Disable telemetry",    "script": "privacy/Disable-Telemetry.ps1" },
+    { "name": "Disable advertising ID","script": "privacy/Disable-AdvertisingId.ps1" },
+    { "name": "Disable Cortana",      "script": "privacy/Disable-Cortana.ps1" },
+    { "name": "Disable location",     "script": "privacy/Disable-LocationTracking.ps1" },
+    { "name": "Disable feedback",     "script": "privacy/Disable-Feedback.ps1" },
+    { "name": "Disable activity",     "script": "privacy/Disable-ActivityHistory.ps1" },
+    {
+      "name": "Remove extended bloatware",
+      "script": "bloatware/Remove-Apps.ps1",
+      "args": { "Apps": "Microsoft.BingNews,Microsoft.BingWeather,Microsoft.GetHelp,Microsoft.Getstarted,Microsoft.MicrosoftSolitaireCollection,Microsoft.People,Microsoft.WindowsFeedbackHub,Microsoft.ZuneMusic,Microsoft.ZuneVideo,Microsoft.XboxGameOverlay,Microsoft.XboxGamingOverlay,Microsoft.XboxIdentityProvider,Microsoft.XboxSpeechToTextOverlay,Microsoft.Xbox.TCUI,Microsoft.YourPhone,Microsoft.WindowsCommunicationsApps,Clipchamp.Clipchamp,MicrosoftTeams" }
+    },
+    {
+      "name": "Disable bloat services",
+      "script": "services/Disable-Services.ps1",
+      "args": { "Services": "DiagTrack,dmwappushservice,XblAuthManager,XblGameSave,XboxGipSvc,XboxNetApiSvc,MapsBroker,lfsvc,RetailDemo,Fax" }
+    },
+    { "name": "Block telemetry hosts", "script": "network/Block-TelemetryHosts.ps1" },
+    { "name": "Set DNS to Cloudflare", "script": "network/Set-DnsCloudflare.ps1" },
+    { "name": "Visual effects → performance", "script": "performance/Set-VisualEffectsPerformance.ps1" },
+    { "name": "Power plan → high performance", "script": "performance/Set-PowerHighPerformance.ps1" },
+    { "name": "Clear temp files", "script": "performance/Clear-TempFiles.ps1" }
+  ]
+}

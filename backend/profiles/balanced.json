@@ -1,0 +1,25 @@
+{
+  "name": "Balanced",
+  "description": "Privacy hardening + common bloatware removal + Cortana/location off. Good daily-driver preset.",
+  "risk": "medium",
+  "steps": [
+    { "name": "Export system state", "script": "backup/Export-SystemState.ps1", "stopOnError": true },
+    { "name": "Create restore point", "script": "backup/New-Checkpoint.ps1", "args": { "Description": "WinOptimizer-Balanced" } },
+    { "name": "Disable telemetry",    "script": "privacy/Disable-Telemetry.ps1" },
+    { "name": "Disable advertising ID","script": "privacy/Disable-AdvertisingId.ps1" },
+    { "name": "Disable Cortana",      "script": "privacy/Disable-Cortana.ps1" },
+    { "name": "Disable location",     "script": "privacy/Disable-LocationTracking.ps1" },
+    { "name": "Disable feedback",     "script": "privacy/Disable-Feedback.ps1" },
+    { "name": "Disable activity",     "script": "privacy/Disable-ActivityHistory.ps1" },
+    {
+      "name": "Remove common bloatware",
+      "script": "bloatware/Remove-Apps.ps1",
+      "args": { "Apps": "Microsoft.BingNews,Microsoft.BingWeather,Microsoft.GetHelp,Microsoft.Getstarted,Microsoft.MicrosoftSolitaireCollection,Microsoft.People,Microsoft.WindowsFeedbackHub,Microsoft.ZuneMusic,Microsoft.ZuneVideo,Clipchamp.Clipchamp,MicrosoftTeams" }
+    },
+    {
+      "name": "Disable telemetry services",
+      "script": "services/Disable-Services.ps1",
+      "args": { "Services": "DiagTrack,dmwappushservice" }
+    }
+  ]
+}
