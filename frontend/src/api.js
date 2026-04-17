@@ -25,6 +25,10 @@ export const api = {
   checkpoint: (description) =>
     request('/backup/checkpoint', { method: 'POST', body: JSON.stringify({ description }) }),
   listBackups: () => request('/backup/list'),
+  restore: (folder, dryRun = true) =>
+    request('/backup/restore', { method: 'POST', body: JSON.stringify({ folder, dryRun }) }),
+  importReg: (folder, file, dryRun = true) =>
+    request('/backup/import-reg', { method: 'POST', body: JSON.stringify({ folder, file, dryRun }) }),
 
   // Privacy
   listPrivacy: () => request('/privacy'),

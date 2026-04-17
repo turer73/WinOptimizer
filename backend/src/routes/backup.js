@@ -21,4 +21,27 @@ router.get('/list', async (_req, res) => {
   res.json(result);
 });
 
+router.post('/restore', async (req, res) => {
+  const { folder, dryRun = true } = req.body || {};
+  if (!folder || typeof folder !== 'string') {
+    return res.status(400).json({ error: 'folder required' });
+  }
+  // psRunner passes non-boolean args after the flag; plain string is fine
+  const result = await runScript('backup/Restore-Registry.ps1', { Folder: folder }, { dryRun });
+  await appendAudit({ module: 'backup', action: 'restore', folder, dryRun, ok: result.ok });
+  res.json(result);
+});
+
+router.post('/import-reg', async (req, res) => {
+  const { folder, file, dryRun = true } = req.body || {};
+  if (!folder || !file) return res.status(400).json({ error: 'folder and file required' });
+  const result = await runScript(
+    'backup/Import-RegFile.ps1',
+    { Folder: folder, File: file },
+    { dryRun },
+  );
+  await appendAudit({ module: 'backup', action: 'import-reg', folder, file, dryRun, ok: result.ok });
+  res.json(result);
+});
+
 export default router;
