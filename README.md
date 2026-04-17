@@ -92,13 +92,16 @@ git clone https://github.com/turer73/WinOptimizer.git
 cd WinOptimizer
 npm run install:all
 
-# 2. Start dev servers (open a PowerShell "Run as Administrator" window)
-npm run dev
+# 2. Start (auto-elevates to Administrator, opens the browser for you)
+.\launch.ps1
 
-# 3. Open http://localhost:5173
+# Or for developers: dev mode with hot reload
+npm run dev   # opens http://localhost:5173
 ```
 
 The UI warns you if it's running without admin — dry-run works, applying does not.
+
+**Want a native window instead of a browser tab?** See [docs/PACKAGING.md](docs/PACKAGING.md) for Tauri build instructions (requires Rust).
 
 ---
 
@@ -172,8 +175,11 @@ WinOptimizer/
 │   │   └── backup/*.ps1       Export, checkpoint, restore
 │   └── profiles/              minimal | balanced | aggressive .json
 ├── frontend/                  Vite + React + Tailwind
+├── src-tauri/                 optional: Rust + Tauri v2 native window shell
 ├── backups/                   git-ignored, per-date registry JSON backups
-└── logs/                      git-ignored, audit-YYYYMMDD.log JSONL
+├── logs/                      git-ignored, audit-YYYYMMDD.log JSONL
+├── launch.ps1                 one-click auto-elevating launcher
+└── docs/PACKAGING.md          how to build the Tauri installer
 ```
 
 ---

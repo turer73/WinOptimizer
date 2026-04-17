@@ -39,6 +39,19 @@ app.get('/api/health', async (_req, res) => {
   });
 });
 
+// Optional: serve the built frontend (frontend/dist) if it exists.
+// This lets launch.ps1 -Build and Tauri run the whole thing from one port.
+const distDir = path.resolve(__dirname, '..', '..', 'frontend', 'dist');
+try {
+  const stat = await fs.stat(distDir);
+  if (stat.isDirectory()) {
+    app.use(express.static(distDir));
+    console.log(`Serving built frontend from ${distDir}`);
+  }
+} catch {
+  // No dist — running in dev mode with Vite proxy.
+}
+
 app.use('/api/privacy', privacyRouter);
 app.use('/api/bloatware', bloatwareRouter);
 app.use('/api/services', servicesRouter);
