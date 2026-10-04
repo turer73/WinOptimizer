@@ -1,7 +1,7 @@
 # WinOptimizer
 
 [![CI](https://github.com/turer73/WinOptimizer/actions/workflows/ci.yml/badge.svg)](https://github.com/turer73/WinOptimizer/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 [![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg)](https://nodejs.org)
 [![PowerShell](https://img.shields.io/badge/powershell-5.1%20%7C%207-blue.svg)](https://docs.microsoft.com/powershell)
 
@@ -190,4 +190,14 @@ Early development. Tested on Windows 11 Pro 23H2 / 24H2. Issues and PRs welcome.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+The code in this repository is licensed under the **GNU Affero General Public
+License v3.0** (`AGPL-3.0-only`). Full text: [LICENSE](LICENSE).
+
+In short: you may use, modify and distribute the code, but if you distribute a
+modified version **or offer it as a service over a network**, you must release
+the source under the same license.
+
+Third-party dependencies and components under `vendor/`-style directories keep
+their own licenses; this license does not cover them.
+
+Copyright (c) 2026 turer73.
